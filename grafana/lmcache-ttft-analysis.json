@@ -533,22 +533,22 @@
       "targets": [
         {
           "expr": "sum(rate(vllm:prompt_tokens_total{service_name=~\"$service_name\"}[$__rate_interval]))",
-          "legendFormat": "Prompt Token 总数",
+          "legendFormat": "Prompt Token 速率",
           "refId": "A"
         },
         {
           "expr": "sum(rate(vllm:prompt_tokens_by_source_total{service_name=~\"$service_name\",source=\"local_cache_hit\"}[$__rate_interval]))",
-          "legendFormat": "GPU 显存命中",
+          "legendFormat": "GPU 显存命中 Token 速率",
           "refId": "B"
         },
         {
           "expr": "sum(rate(vllm:prompt_tokens_by_source_total{service_name=~\"$service_name\",source=\"external_kv_transfer\"}[$__rate_interval]))",
-          "legendFormat": "LMCache 命中",
+          "legendFormat": "LMCache 命中 Token 速率",
           "refId": "C"
         },
         {
           "expr": "sum(rate(vllm:prompt_tokens_by_source_total{service_name=~\"$service_name\",source=\"local_compute\"}[$__rate_interval]))",
-          "legendFormat": "需要计算",
+          "legendFormat": "需要计算的 Token 速率",
           "refId": "D"
         }
       ],
@@ -822,7 +822,7 @@
               "refId": "G"
             }
           ],
-          "title": "Lookup 分段耗时（平均值）",
+          "title": "异步lookup+prefetch分段耗时（平均值）",
           "type": "timeseries"
         },
         {
@@ -1022,7 +1022,7 @@
               "refId": "G"
             }
           ],
-          "title": "Lookup 分段耗时（P99）",
+          "title": "异步lookup+prefetch分段耗时（P99）",
           "type": "timeseries"
         },
         {
@@ -1222,7 +1222,7 @@
               "refId": "G"
             }
           ],
-          "title": "Lookup 分段耗时（P9999）",
+          "title": "异步lookup+prefetch分段耗时（P9999）",
           "type": "timeseries"
         },
         {
@@ -3014,7 +3014,7 @@
                 "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
-                "axisLabel": "",
+                "axisLabel": "chunk/s",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "barWidthFactor": 0.6,
@@ -3087,9 +3087,9 @@
                 "uid": "cf5zm84e41v5se"
               },
               "editorMode": "code",
-              "expr": "sum by (service_name) (rate(lmcache_mp_l1_write_chunks_total{service_name=~\"$service_name\"}[1m]))",
+              "expr": "sum by (service_name) (rate(lmcache_mp_l1_evicted_chunks_total{service_name=~\"$service_name\"}[1m]))",
               "instant": false,
-              "legendFormat": "{{service_name}} 写入速率 (chunk/s)",
+              "legendFormat": "淘汰速率",
               "range": true,
               "refId": "A"
             },
@@ -3099,9 +3099,9 @@
                 "uid": "cf5zm84e41v5se"
               },
               "editorMode": "code",
-              "expr": "sum by (service_name) (rate(lmcache_mp_l1_read_chunks_total{service_name=~\"$service_name\"}[1m]))",
+              "expr": "sum by (service_name) (rate(lmcache_mp_l1_write_chunks_total{service_name=~\"$service_name\"}[1m]))",
               "instant": false,
-              "legendFormat": "{{service_name}} 读取速率 (chunk/s)",
+              "legendFormat": "写入速率",
               "range": true,
               "refId": "B"
             },
@@ -3111,14 +3111,14 @@
                 "uid": "cf5zm84e41v5se"
               },
               "editorMode": "code",
-              "expr": "sum by (service_name) (rate(lmcache_mp_l1_evicted_chunks_total{service_name=~\"$service_name\"}[1m]))",
+              "expr": "sum by (service_name) (rate(lmcache_mp_l1_read_chunks_total{service_name=~\"$service_name\"}[1m]))",
               "instant": false,
-              "legendFormat": "{{service_name}} 淘汰速率 (chunk/s)",
+              "legendFormat": "读取速率",
               "range": true,
               "refId": "C"
             }
           ],
-          "title": "内存LRU Chunk速率",
+          "title": "内存LRU Chunk速率（个/s）",
           "type": "timeseries"
         },
         {
@@ -3210,7 +3210,7 @@
               },
               "editorMode": "code",
               "expr": "sum by (service_name) (lmcache_mp_l1_usage_ratio{service_name=~\"$service_name\"})",
-              "legendFormat": "{{service_name}} 使用率",
+              "legendFormat": "{{service_name}} 内存LRU使用率",
               "range": true,
               "refId": "A"
             }
@@ -3269,5 +3269,5 @@
   "timezone": "Asia/Shanghai",
   "title": "LMCache_TTFT_Analysis",
   "uid": "ttft-analysis",
-  "version": 122
+  "version": 125
 }
